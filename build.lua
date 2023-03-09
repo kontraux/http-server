@@ -1,7 +1,7 @@
 local build = {}
--- To do: varargs to main so these can be changed from the command line
-COMPILER = 'gcc'
-LANG = 'c'
+-- Info that will be fed to the compiler. To do: allow these to be changed from command line.
+COMPILER = 'g++'
+LANG = 'cpp'
 LIBRARIES = {
     'server',
     'main'
@@ -10,6 +10,7 @@ BINARY_NAME = 'server.exe'
 INCLUDE = "-lws2_32"
 FLAGS = ""
 
+-- Delete intermediate objects.
 local function clean(objects)
     for i in ipairs(objects) do
         os.remove(objects[i])
@@ -26,6 +27,7 @@ local function compile_program(cmd)
     end
 end
 
+-- Create strings for the commands to be passed to standard input.
 local function prep_program(arr)
     local str = COMPILER .. " " .. FLAGS .. " "
     for i in ipairs(arr) do
@@ -50,6 +52,7 @@ local function prep_cmds()
     return t, o
 end
 
+-- Create intermediate objects for the libraries.
 local function compile_objects(arr)
     for i in ipairs(arr) do
         local m = os.execute(arr[i])
