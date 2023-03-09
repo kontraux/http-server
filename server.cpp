@@ -1,6 +1,5 @@
 #include "server.hpp"
 #include "route.hpp"
-#include "route.cpp"
 
 #ifdef _WIN32
 #include <winsock2.h>
@@ -75,16 +74,18 @@ int Server::run(){
         }
 
         // Read data from client
-        while (received != 0) {
-            received = recv(newsock, buffer, sizeof(buffer), 0);
-            printf("Bytes received: %i\n", received);
-            std::cout << buffer;
-            if (received == SOCKET_ERROR) {
-                m = "Receive failed with error: ";
-                closeConnections(m);
-                return 1;
-            }
+        received = recv(newsock, buffer, sizeof(buffer), 0);
+        printf("Bytes received: %i\n", received);
+        std::cout << buffer;
+        printf("%s", buffer);
+        if (received == SOCKET_ERROR) {
+            m = "Receive failed with error: ";
+            closeConnections(m);
+            return 1;
         }
+
+        std::string req = buffer;
+        route.getPath(req);
 
         // Send response
         std::string response = route.writeHeaders() + "\r\n\r\n" + route.writeBody();

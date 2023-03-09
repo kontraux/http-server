@@ -1,6 +1,11 @@
 #include <iostream>
 #include "route.hpp"
 
+std::string Route::getPath(std::string req) {
+    std::cout << req;
+    return req;
+}
+
 std::string Route::timestamp() {
     time_t now = time(0);
     struct tm* gmt = gmtime(&now);

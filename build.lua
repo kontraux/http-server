@@ -3,8 +3,9 @@ local build = {}
 COMPILER = 'g++'
 LANG = 'cpp'
 LIBRARIES = {
+    'route',
     'server',
-    'main'
+    'main',
 }
 BINARY_NAME = 'server.exe'
 INCLUDE = "-lws2_32"

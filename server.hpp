@@ -9,7 +9,7 @@ class Server {
     private:
     static int port;
     int clilen;
-    char buffer[256];
+    char buffer[1024];
     int received;
     int sent;
     std::string m;
