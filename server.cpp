@@ -1,5 +1,5 @@
 #include "server.hpp"
-#include "route.hpp"
+#include "router.hpp"
 
 #ifdef _WIN32
 #include <winsock2.h>
@@ -8,13 +8,12 @@
 
 WSADATA wsaData;
 SOCKET newsock, sockfd;
-Route route;
+Router router;
 struct sockaddr_in serv_addr, cli_addr;
 int Server::port = 8080;
 
-
 void Server::closeConnections(std::string m) {
-    std::cout << m + std::to_string(WSAGetLastError());
+    std::cout << m + std::to_string(WSAGetLastError()) << std::endl;
     closesocket(sockfd);
     closesocket(newsock);
     WSACleanup();
@@ -77,7 +76,6 @@ int Server::run(){
         received = recv(newsock, buffer, sizeof(buffer), 0);
         printf("Bytes received: %i\n", received);
         std::cout << buffer;
-        printf("%s", buffer);
         if (received == SOCKET_ERROR) {
             m = "Receive failed with error: ";
             closeConnections(m);
@@ -85,11 +83,10 @@ int Server::run(){
         }
 
         std::string req = buffer;
-        route.getPath(req);
 
         // Send response
-        std::string response = route.writeHeaders() + "\r\n\r\n" + route.writeBody();
-        std::cout << response;
+        std::string response = router.getResponse(req);
+        std::cout << "\n" + response;
 
         long total_bytes = 0;
         while (total_bytes < response.size()) {
