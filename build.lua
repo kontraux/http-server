@@ -3,7 +3,7 @@ local build = {}
 COMPILER = 'g++'
 LANG = 'cpp'
 LIBRARIES = {
-    'route',
+    'router',
     'server',
     'main',
 }
