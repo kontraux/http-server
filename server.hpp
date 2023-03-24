@@ -3,6 +3,7 @@
 #include <string>
 #include <iostream>
 #include <cstring>
+#include <pthread.h>
 
 
 class Server {
@@ -10,14 +11,12 @@ class Server {
     static int port;
     int clilen;
     char buffer[1024];
-    int received;
-    int sent;
     std::string m;
 
     public:
     int run();
     int init();
-    void closeConnections(std::string m);
+
 };
 
 #endif

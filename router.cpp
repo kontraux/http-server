@@ -38,9 +38,14 @@ std::string Router::parseHeaders(std::string req) {
     std::string path;
     std::stringstream ss(req);
     std::getline(ss, path);
-    size_t start = path.find("GET ") + 4;
-    size_t end = path.find(" HTTP/1.");
-    return path.substr(start, end - start);
+    if (path.length() > 8) {
+        size_t start = path.find("GET ") + 4;
+        size_t end = path.find(" HTTP/1.");
+        return path.substr(start, end - start);
+    } else {
+        std::cout << "Nothing requested, quitting.";
+        return "";
+    }
 }
 
 
@@ -76,15 +81,11 @@ std::string Router::writeBody() {
 
 std::string Router::getResponse(std::string req) {
     std::string path = parseHeaders(req);
+    std::cout << path << std::endl;
     std::string response;
-    for (int i = 0; i < sizeof(routes); i++) {
-        if (path == routes[i]) {
-            response = writeHeaders(0) + "\r\n\r\n" + writeBody();
-            return response;
-        } else {
-            response = writeHeaders(1);
-            return response;
-        }
-    }
+    
+    response = writeHeaders(0) + "\r\n\r\n" + writeBody();
+
+    std::cout << response << std::endl;
     return response;
 }
