@@ -10,6 +10,7 @@ class Router {
     std::string writeBody();
     std::string parseHeaders(std::string req);
     std::string getResponse(std::string req);
+    int getMethod(std::string method);
     int sendFile(const char * filename, SOCKET socket);
 };
 

@@ -21,7 +21,6 @@ DWORD WINAPI handleConnection(LPVOID lpParam) {
     memset(buffer, 0, sizeof(buffer));
 
     received = recv(newsock, buffer, sizeof(buffer), 0);
-    printf("Bytes received: %i\n", received);
     if (received == SOCKET_ERROR) {
         std::cout << "Receive failed with error: " << std::endl;
         closesocket(sockfd);
@@ -32,7 +31,6 @@ DWORD WINAPI handleConnection(LPVOID lpParam) {
 
     std::string req = buffer;
     std::string response = router.getResponse(req);
-    std::cout << req << "\n" << response;
 
     long total_bytes = 0;
     while (total_bytes < response.size()) {

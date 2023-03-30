@@ -34,16 +34,32 @@ int Router::sendFile(const char* filename, SOCKET socket) {
     return 0;
 }
 
+int Router::getMethod(std::string str) {
+    std::string method = "";
+    int i = 0;
+    while (i < 3 && str[i] != ' ') {
+        method += str[i];
+        i++;
+    }
+    if (method.compare("GET") == 0) {
+        return 200;
+    } else {
+        std::cout << method;
+        return 405;
+    }
+}
+
 std::string Router::parseHeaders(std::string req) {
     std::string path;
     std::stringstream ss(req);
     std::getline(ss, path);
-    if (path.length() > 8) {
-        size_t start = path.find("GET ") + 4;
-        size_t end = path.find(" HTTP/1.");
+    size_t start = path.find("GET ");
+    size_t end = path.find(" HTTP/1.");
+    if (start != std::string::npos && end != std::string::npos) {
+        start += 4;
         return path.substr(start, end - start);
     } else {
-        std::cout << "Nothing requested, quitting.";
+        std::cout << "error parsing headers for path.\n";
         return "";
     }
 }
@@ -57,20 +73,27 @@ std::string Router::timestamp() {
     return date_str;
 }
 
-std::string Router::writeHeaders(int _status) {
-    std::string status;
+std::string Router::writeHeaders(int status) {
+    std::string server_status;
     static std::string headers;
 
     std::string date = "Date: " + timestamp() + "\r\n";
     std::string content_len = "Content-Length: " + std::to_string(writeBody().length()) + "\r\n";
-    if (_status == 0) { 
-        status = "HTTP/1.1 200 OK\r\n"; } else {
-        status = "HTTP/1.1 404 NOT FOUND\r\n";
+    switch (status) {
+        case 200:
+            server_status = "HTTP/1.1 200 OK\r\n";
+            break;
+        case 404:
+            server_status = "HTTP/1.1 404 NOT FOUND\r\n";
+            break;
+        case 405:
+            server_status = "HTTP/1.1 405 METHOD NOT ALLOWED";
+            break;
     }
     std::string server = "Server: http-server\r\n";
     std::string content_type = "Content-type: text/html\r\n";
     std::string connection_status = "Connection: closed\r\n";
-    headers = status + content_len + date + server + content_type + connection_status;
+    headers = server_status + content_len + date + server + content_type + connection_status;
     return headers;
 }
 
@@ -80,12 +103,13 @@ std::string Router::writeBody() {
 }
 
 std::string Router::getResponse(std::string req) {
+    int status = getMethod(req);
+
     std::string path = parseHeaders(req);
-    std::cout << path << std::endl;
     std::string response;
     
-    response = writeHeaders(0) + "\r\n\r\n" + writeBody();
-
-    std::cout << response << std::endl;
+    response = writeHeaders(status) + "\r\n\r\n" + writeBody();
+    std::cout << req;
+    std::cout << response;
     return response;
 }
